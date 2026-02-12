@@ -18,8 +18,8 @@ final class HomeViewModel: ObservableObject {
     func load() async {
         guard movies.isEmpty else { return }
         isLoading = true
-        // Simulate network delay (e.g., 0.6s)
-        try? await Task.sleep(for: .milliseconds(60000))
+        // Simulate network delay
+        try? await Task.sleep(for: .milliseconds(6000))
         self.movies = Self.mockMovies()
         isLoading = false
     }

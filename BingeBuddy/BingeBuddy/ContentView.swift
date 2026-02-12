@@ -45,6 +45,7 @@ struct ContentView: View {
     }
 }
 
+// MARK: Posterview
 private struct MoviePosterView: View {
     let movie: Movie
 
@@ -136,7 +137,7 @@ private struct SkeletonPosterCard: View {
     }
 }
 
-// Simple shimmer effect
+//MARK: Shimmer effect
 private struct ShimmerModifier: ViewModifier {
     @State private var phase: CGFloat = -1
     let isActive: Bool
