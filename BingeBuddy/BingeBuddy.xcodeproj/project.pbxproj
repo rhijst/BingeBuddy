@@ -6,8 +6,13 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		97C0E3522F3F5FFB00BF2658 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 97C0E3512F3F5FED00BF2658 /* .gitignore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		39F5D0112F363FD200131721 /* BingeBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BingeBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		97C0E3512F3F5FED00BF2658 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +37,7 @@
 		39F5D0082F363FD200131721 = {
 			isa = PBXGroup;
 			children = (
+				97C0E3512F3F5FED00BF2658 /* .gitignore */,
 				39F5D0132F363FD200131721 /* BingeBuddy */,
 				39F5D0122F363FD200131721 /* Products */,
 			);
@@ -109,6 +115,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				97C0E3522F3F5FFB00BF2658 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
