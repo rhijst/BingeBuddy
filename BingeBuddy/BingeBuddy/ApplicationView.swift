@@ -24,8 +24,15 @@ struct ApplicationView: View {
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     LazyHStack(spacing: 12) {
                                         ForEach(group.movies) { movie in
-                                            MoviePosterView(movie: movie)
-                                                .frame(width: 120)
+                                            if let id = movie.id {
+                                                NavigationLink(value: id) {
+                                                    MoviePosterView(movie: movie)
+                                                        .frame(width: 120)
+                                                }
+                                            } else {
+                                                MoviePosterView(movie: movie)
+                                                    .frame(width: 120)
+                                            }
                                         }
                                     }
                                     .padding(.horizontal, 16)
@@ -40,6 +47,9 @@ struct ApplicationView: View {
             .navigationTitle("Binge Buddy")
             .task {
                 await viewModel.load()
+            }
+            .navigationDestination(for: String.self) { movieID in
+                MovieDetailView(movieID: movieID)
             }
         }
     }

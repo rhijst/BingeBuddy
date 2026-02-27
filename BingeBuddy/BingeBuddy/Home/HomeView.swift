@@ -24,6 +24,10 @@ struct HomeView: View {
             .task {
                 await viewModel.load()
             }
+            // Define navigation destinations at the NavigationStack level
+            .navigationDestination(for: String.self) { movieID in
+                MovieDetailView(movieID: movieID)
+            }
         }
     }
 }

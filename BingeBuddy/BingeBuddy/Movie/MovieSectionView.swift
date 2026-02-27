@@ -15,8 +15,16 @@ struct MovieSectionView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(movies) { movie in
-                        MoviePosterView(movie: movie)
-                            .frame(width: 120)
+                        if let id = movie.id {
+                            NavigationLink(value: id) {
+                                MoviePosterView(movie: movie)
+                                    .frame(width: 120)
+                            }
+                        } else {
+                            // Fallback: no ID, show non-interactive poster
+                            MoviePosterView(movie: movie)
+                                .frame(width: 120)
+                        }
                     }
                 }
                 .padding(.horizontal, 16)
