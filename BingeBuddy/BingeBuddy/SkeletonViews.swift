@@ -14,14 +14,12 @@ struct SkeletonHomeView: View {
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 120, height: 18)
                         .padding(.horizontal, 16)
-                        .shimmer()
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 12) {
                             ForEach(0..<itemsPerRow, id: \.self) { _ in
                                 SkeletonPosterCard()
                                     .frame(width: 120)
-                                    .shimmer()
                             }
                         }
                         .padding(.horizontal, 16)
