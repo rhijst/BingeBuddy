@@ -3,6 +3,10 @@ import SwiftUI
 struct MovieDetailView: View {
     @StateObject private var viewModel: MovieDetailViewModel
 
+    // Lists store and sheet state
+    @StateObject private var listsStore = MovieListsStore()
+    @State private var showingAddToList = false
+
     init(movieID: String) {
         _viewModel = StateObject(wrappedValue: MovieDetailViewModel(movieID: movieID))
     }
@@ -110,6 +114,16 @@ struct MovieDetailView: View {
         }
         .navigationTitle(viewModel.titleText)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    showingAddToList = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel("Add to list")
+            }
+        }
         .task {
             await viewModel.load()
         }
@@ -128,6 +142,9 @@ struct MovieDetailView: View {
         }, message: {
             Text(viewModel.errorMessage ?? "Unknown error")
         })
+        .sheet(isPresented: $showingAddToList) {
+            AddToListSheet(store: listsStore, movieID: viewModel.movieID)
+        }
     }
 }
 
