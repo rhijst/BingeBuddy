@@ -68,3 +68,15 @@ struct MoviePosterView: View {
         .accessibilityLabel(movie.title)
     }
 }
+
+#Preview {
+    MoviePosterView(
+        movie: Movie(
+            id: "tt0133093",
+            title: "The Matrix",
+            genre: "Sci-Fi",
+            posterAssetName: nil,
+            posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5BMm.jpg")
+        )
+    )
+}

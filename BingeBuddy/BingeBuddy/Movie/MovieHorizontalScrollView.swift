@@ -33,3 +33,32 @@ struct MovieSectionView: View {
         }
     }
 }
+
+#Preview {
+    MovieSectionView(
+        title: "Popular",
+        movies: [
+            Movie(
+                id: "tt0133093",
+                title: "The Matrix",
+                genre: "Sci-Fi",
+                posterAssetName: nil,
+                posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5BMm.jpg")
+            ),
+            Movie(
+                id: "tt0111161",
+                title: "Shawshank",
+                genre: "Drama",
+                posterAssetName: nil,
+                posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5B.jpg")
+            ),
+            Movie(
+                id: "tt0068646",
+                title: "The Godfather",
+                genre: "Crime",
+                posterAssetName: nil,
+                posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5C.jpg")
+            )
+        ]
+    )
+}
