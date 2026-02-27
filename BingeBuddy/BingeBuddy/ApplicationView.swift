@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct ContentView: View {
+struct ApplicationView: View {
     @StateObject private var viewModel = HomeViewModel()
 
     var body: some View {
@@ -46,5 +46,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ApplicationView()
 }

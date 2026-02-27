@@ -7,7 +7,7 @@ struct BingeBuddyApp: App {
     var body: some Scene {
         WindowGroup {
             ZStack {
-                ContentView()
+                HomeView()
                     .opacity(showSplash ? 0 : 1)
 
                 if showSplash {
