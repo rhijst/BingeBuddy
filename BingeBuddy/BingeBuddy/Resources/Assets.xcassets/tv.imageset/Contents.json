@@ -1,12 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "Unknown-3.jpg",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "icon-watchos-1024x1024.png",
+      "filename" : "tv.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
