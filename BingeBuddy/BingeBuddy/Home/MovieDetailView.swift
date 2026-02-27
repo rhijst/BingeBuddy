@@ -54,22 +54,17 @@ struct MovieDetailView: View {
                 HStack(spacing: 12) {
                     if let year = viewModel.yearText {
                         Label(year, systemImage: "calendar")
-                            .labelStyle(.iconOnly)
-                            .overlay(Text(year).padding(.leading, 20), alignment: .leading)
-                            .accessibilityLabel("Year \(year)")
                     }
                     if let runtime = viewModel.runtimeText {
                         Label(runtime, systemImage: "clock")
-                            .labelStyle(.iconOnly)
-                            .overlay(Text(runtime).padding(.leading, 20), alignment: .leading)
-                            .accessibilityLabel("Runtime \(runtime)")
                     }
                     if let rating = viewModel.ratingText {
-                        Label(rating, systemImage: "star.fill")
-                            .foregroundStyle(.yellow)
-                            .labelStyle(.iconOnly)
-                            .overlay(Text(rating).padding(.leading, 20), alignment: .leading)
-                            .accessibilityLabel("Rating \(rating)")
+                        Label {
+                            Text(rating)
+                        } icon: {
+                            Image(systemName: "star.fill")
+                                .foregroundStyle(.yellow)
+                        }
                     }
                 }
                 .font(.subheadline)

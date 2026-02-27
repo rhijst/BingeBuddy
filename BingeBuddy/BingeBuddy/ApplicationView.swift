@@ -29,6 +29,7 @@ struct ApplicationView: View {
                                                     MoviePosterView(movie: movie)
                                                         .frame(width: 120)
                                                 }
+                                                .tint(.primary) // Ensure text inside the link uses normal label color
                                             } else {
                                                 MoviePosterView(movie: movie)
                                                     .frame(width: 120)
