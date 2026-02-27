@@ -29,6 +29,7 @@ final class HomeViewModel: ObservableObject {
                 let posterURL = URL(string: dto.primaryImage?.url ?? "")
                 return [
                     Movie(
+                        id: dto.id ?? "tt0133093",
                         title: dto.primaryTitle ?? dto.originalTitle ?? "Untitled",
                         genre: genre,
                         posterAssetName: nil,

@@ -1,7 +1,7 @@
 import Foundation
 
 struct Movie: Identifiable, Hashable {
-    let id: UUID
+    let id: String?
     let title: String
     let genre: String
 
@@ -10,7 +10,7 @@ struct Movie: Identifiable, Hashable {
     let posterURL: URL?
 
     init(
-        id: UUID = UUID(),
+        id: String,
         title: String,
         genre: String,
         posterAssetName: String? = nil,
