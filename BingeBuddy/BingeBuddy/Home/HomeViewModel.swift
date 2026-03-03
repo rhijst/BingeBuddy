@@ -48,10 +48,14 @@ final class HomeViewModel: ObservableObject {
     // MARK: - Networking
 
     private func fetchPopularTitles() async throws -> [TitleDTO] {
-        var components = URLComponents(string: "https://api.imdbapi.dev/titles")!
+        guard var components = URLComponents(string: "https://api.imdbapi.dev/titles") else {
+            throw URLError(.badURL)
+        }
+        
         components.queryItems = [
             URLQueryItem(name: "sortBy", value: "SORT_BY_POPULARITY")
         ]
+        
         guard let url = components.url else {
             throw URLError(.badURL)
         }
@@ -62,13 +66,33 @@ final class HomeViewModel: ObservableObject {
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+        guard let http = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
+        }
+        
+        // Check for status code 2xx range
+        guard (200...299).contains(http.statusCode) else {
+            throw URLError(.badServerResponse, userInfo: ["statusCode": http.statusCode])
+        }
+        
+        // Optionally, you can check for specific status codes if needed, e.g.
+        guard http.statusCode != 404 else {
+            throw URLError(.resourceUnavailable)
+        }
+        
+        guard http.statusCode != 500 else {
+            throw URLError(.cannotConnectToHost)
         }
 
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .useDefaultKeys
-        let root = try decoder.decode(TitlesResponse.self, from: data)
-        return root.titles ?? []
+
+        do {
+            let root = try decoder.decode(TitlesResponse.self, from: data)
+            return root.titles ?? []
+        } catch {
+            //TODO: return empty array and handle exeption gracefully instead of throwing error
+            throw URLError(.cannotDecodeContentData)
+        }
     }
 }
