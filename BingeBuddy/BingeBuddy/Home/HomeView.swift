@@ -71,8 +71,7 @@ struct HomeView: View {
         // Build a quick lookup from fetched movies by id
         let indexByID: [String: Movie] = Dictionary(uniqueKeysWithValues:
             viewModel.movies.compactMap { movie in
-                guard let id = movie.id else { return nil }
-                return (id, movie)
+                return (movie.id, movie)
             }
         )
 
