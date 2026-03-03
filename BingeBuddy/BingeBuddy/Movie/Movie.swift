@@ -1,7 +1,7 @@
 import Foundation
 
 struct Movie: Identifiable, Hashable {
-    let id: String?
+    let id: String
     let title: String
     let genre: String
 

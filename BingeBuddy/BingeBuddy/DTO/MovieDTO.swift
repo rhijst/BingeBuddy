@@ -1,3 +1,4 @@
+// Decodable DTOs for GET https://api.imdbapi.dev/titles
 struct TitlesResponse: Decodable {
     let titles: [TitleDTO]?
 }

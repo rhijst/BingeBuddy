@@ -13,14 +13,10 @@ struct DetailedTitleDTO: Decodable {
     let runtimeSeconds: Int?
     let genres: [String]?
     let rating: DetailedRatingDTO?
-    let metacritic: MetacriticDTO?
     let plot: String?
     let directors: [DetailedPersonDTO]?
     let writers: [DetailedPersonDTO]?
     let stars: [DetailedPersonDTO]?
-    let originCountries: [DetailedCodeNameDTO]?
-    let spokenLanguages: [DetailedCodeNameDTO]?
-    let interests: [DetailedInterestDTO]?
 }
 
 struct DetailedImageDTO: Decodable {
@@ -33,12 +29,6 @@ struct DetailedImageDTO: Decodable {
 struct DetailedRatingDTO: Decodable {
     let aggregateRating: Double?
     let voteCount: Int?
-}
-
-struct MetacriticDTO: Decodable {
-    let url: String?
-    let score: Int?
-    let reviewCount: Int?
 }
 
 struct DetailedPersonDTO: Decodable {
@@ -81,5 +71,4 @@ struct DetailedInterestDTO: Decodable {
     let primaryImage: DetailedImageDTO?
     let description: String?
     let isSubgenre: Bool?
-    // similarInterests omitted (heterogeneous/unknown shape in sample)
 }
