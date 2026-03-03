@@ -5,7 +5,7 @@ struct Movie: Identifiable, Hashable {
     let title: String
     let genre: String
 
-    // Voor nu lokale assetnaam, later kan posterURL gebruikt worden
+    //PosterAssetName: if there is no online poster, use cached variant (local use)
     let posterAssetName: String?
     let posterURL: URL?
 

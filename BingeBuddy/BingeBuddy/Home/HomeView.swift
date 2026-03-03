@@ -14,7 +14,7 @@ struct HomeView: View {
                 } else {
                     LazyVStack(alignment: .leading, spacing: 20) {
                         // Your Lists section
-                        if !listsStore.lists.isEmpty {
+                        if(!listsStore.lists.isEmpty){
                             sectionHeader("Your Lists",size: 30)
                                 .padding(.horizontal, 16)
 
@@ -45,9 +45,6 @@ struct HomeView: View {
                         }
                     }
                     .padding(.top, 8)
-                    .animation(.default, value: viewModel.movies.count)
-                    .animation(.default, value: listsStore.lists)
-                    .animation(.default, value: listsStore.cachedMoviesByID)
                 }
             }
             .task {
