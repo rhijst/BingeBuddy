@@ -53,11 +53,10 @@ struct MovieDetailLandscapeView: View {
                             )
                     }
                 }
-                // Give the poster ~40% of the width
                 .frame(width: geo.size.width * 0.4, alignment: .top)
                 .padding(.leading, 16)
 
-                // Right column: details (scrollable if needed)
+                // Right column: details
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
                         // Title
@@ -65,7 +64,7 @@ struct MovieDetailLandscapeView: View {
                             .font(.title2.weight(.semibold))
                             .accessibilityAddTraits(.isHeader)
 
-                        // Meta row: year - runtime - rating
+                        // Meta row
                         HStack(spacing: 12) {
                             if let year = viewModel.yearText {
                                 Label(year, systemImage: "calendar")
@@ -120,10 +119,46 @@ struct MovieDetailLandscapeView: View {
                                     .font(.body)
                             }
                         }
+
+                        // Actors with links
+                        if let stars = viewModel.detail?.stars, !stars.isEmpty {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Actor(s)")
+                                    .font(.headline)
+                                FlexibleActorLinks(stars: stars)
+                            }
+                        }
                     }
                     .padding(.trailing, 16)
                     .padding(.vertical, 16)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                }
+            }
+        }
+    }
+}
+
+private struct FlexibleActorLinks: View {
+    let stars: [DetailedPersonDTO]
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(stars.indices, id: \.self) { idx in
+                let star = stars[idx]
+                if let id = star.id, let name = star.displayName {
+                    NavigationLink {
+                        PersonFilmographyView(personID: id, personName: name)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "person")
+                                .foregroundStyle(.secondary)
+                            Text(name)
+                                .foregroundStyle(.tint)
+                        }
+                    }
+                } else if let name = star.displayName {
+                    Text(name)
+                        .foregroundStyle(.secondary)
                 }
             }
         }
