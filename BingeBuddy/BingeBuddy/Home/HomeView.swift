@@ -34,6 +34,11 @@ struct HomeView: View {
                         sectionHeader("Most Popular Movies",size: 30)
                             .padding(.horizontal, 16)
 
+                        if(viewModel.groupedMovies.count <= 0){
+                            Text("Something went wrong loading the movies... Please try again later.")
+                                .padding(.horizontal, 16)
+                        }
+                        
                         // Existing genre sections
                         ForEach(viewModel.groupedMovies, id: \.genre) { group in
                             MovieSectionView(title: group.genre, movies: group.movies)

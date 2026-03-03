@@ -22,27 +22,35 @@ final class HomeViewModel: ObservableObject {
 
         do {
             let fetched = try await fetchPopularTitles()
-            // Map API DTOs to your Movie model
-            let mapped: [Movie] = fetched.flatMap { dto in
-                // Choose first genre if available; otherwise use "Unknown"
-                let genre = dto.genres?.first ?? "Unknown"
-                let posterURL = URL(string: dto.primaryImage?.url ?? "")
-                return [
-                    Movie(
-                        id: dto.id ?? "tt0133093",
-                        title: dto.primaryTitle ?? dto.originalTitle ?? "Untitled",
-                        genre: genre,
-                        posterAssetName: nil,
-                        posterURL: posterURL
-                    )
-                ]
+            // Map API DTOs to the Movie model
+            let mapped: [Movie] = fetched.map { dto in
+                return mapToMovie(dto: dto)
             }
             self.movies = mapped
         } catch {
-            // In case of failure, you might want to log or show an error state
-            // For now, leave movies empty
             print("Failed to load titles: \(error)")
         }
+    }
+
+    // Helper function to map DTO to Movie
+    private func mapToMovie(dto: TitleDTO) -> Movie {
+        let genre = dto.genres?.first ?? "Unknown"
+        
+        // Safely create poster URL (only if URL string is not empty or valid)
+        var posterURL: URL? = URL(string: "")
+        if let urlString = dto.primaryImage?.url, let newURL = URL(string: urlString) {
+            posterURL = newURL
+        } else {
+            print("Invalid or missing poster URL. -- " + (dto.primaryImage?.url ?? "No url provided") + " --")
+        }
+
+        return Movie(
+            id: dto.id ?? "tt0133093",
+            title: dto.primaryTitle ?? dto.originalTitle ?? "Untitled",
+            genre: genre,
+            posterAssetName: nil,
+            posterURL: posterURL
+        )
     }
 
     // MARK: - Networking
