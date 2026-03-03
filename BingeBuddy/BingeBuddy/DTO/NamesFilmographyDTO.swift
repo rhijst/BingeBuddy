@@ -23,7 +23,6 @@ struct CreditTitleDTO: Decodable {
     let runtimeSeconds: Int?
     let genres: [String]?
     let rating: DetailedRatingDTO?
-    let metacritic: MetacriticDTO?
     let plot: String?
     let directors: [DetailedPersonDTO]?
     let writers: [DetailedPersonDTO]?
