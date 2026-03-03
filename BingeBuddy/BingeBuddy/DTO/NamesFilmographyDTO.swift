@@ -11,6 +11,12 @@ struct NameCreditDTO: Decodable, Identifiable {
     let title: CreditTitleDTO
 }
 
+struct MetacriticDTO: Decodable {
+    let url: String?
+    let score: Int?
+    let reviewCount: Int?
+}
+
 struct CreditTitleDTO: Decodable {
     let id: String?
     let type: String?
@@ -21,6 +27,7 @@ struct CreditTitleDTO: Decodable {
     let startYear: Int?
     let endYear: Int?
     let runtimeSeconds: Int?
+    let metacritic: MetacriticDTO?
     let genres: [String]?
     let rating: DetailedRatingDTO?
     let plot: String?
