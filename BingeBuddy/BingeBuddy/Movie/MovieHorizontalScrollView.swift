@@ -15,17 +15,11 @@ struct MovieSectionView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(movies) { movie in
-                        if let id = movie.id {
-                            NavigationLink(value: id) {
-                                MoviePosterView(movie: movie)
-                                    .frame(width: 120)
-                            }
-                            .tint(.primary) // Ensure text inside the link uses normal label color
-                        } else {
-                            // Fallback: no ID, show non-interactive poster
+                        NavigationLink(value: movie.id) {
                             MoviePosterView(movie: movie)
                                 .frame(width: 120)
                         }
+                        .tint(.primary) // Ensure text inside the link uses normal label color
                     }
                 }
                 .padding(.horizontal, 16)
