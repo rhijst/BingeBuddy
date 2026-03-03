@@ -87,6 +87,11 @@ final class MovieDetailViewModel: ObservableObject {
         return names.joined(separator: ", ")
     }
 
+    var actorsText: String? {
+        guard let names = detail?.stars?.compactMap({ $0.displayName }), !names.isEmpty else { return nil }
+        return names.joined(separator: ", ")
+    }
+
     // MARK: - Networking
 
     private func fetchDetail(for id: String) async throws -> DetailedTitleDTO {

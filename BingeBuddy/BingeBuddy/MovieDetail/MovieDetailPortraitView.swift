@@ -101,9 +101,48 @@ struct MovieDetailPortraitView: View {
                             .font(.body)
                     }
                 }
+
+                // Actors as tappable links
+                if let stars = viewModel.detail?.stars, !stars.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Actor(s)")
+                            .font(.headline)
+                        // Flow layout: simple wrap using flexible rows
+                        FlexibleActorLinks(stars: stars)
+                    }
+                }
             }
             .padding(16)
             .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+private struct FlexibleActorLinks: View {
+    let stars: [DetailedPersonDTO]
+
+    var body: some View {
+        // Simple wrap using a LazyVStack of HStacks
+        // For simplicity, show as a vertical list of links
+        VStack(alignment: .leading, spacing: 6) {
+            ForEach(stars.indices, id: \.self) { idx in
+                let star = stars[idx]
+                if let id = star.id, let name = star.displayName {
+                    NavigationLink {
+                        PersonFilmographyView(personID: id, personName: name)
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "person")
+                                .foregroundStyle(.secondary)
+                            Text(name)
+                                .foregroundStyle(.tint)
+                        }
+                    }
+                } else if let name = star.displayName {
+                    Text(name)
+                        .foregroundStyle(.secondary)
+                }
+            }
         }
     }
 }
