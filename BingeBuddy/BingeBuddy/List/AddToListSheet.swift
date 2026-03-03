@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddToListSheet: View {
-    @ObservedObject var store: MovieListsStore
+    @EnvironmentObject var store: MovieListsStore
     let movieID: String
     @State private var newListName: String = ""
 

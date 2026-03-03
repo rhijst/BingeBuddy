@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
-    @StateObject private var listsStore = MovieListsStore()
+    @EnvironmentObject private var listsStore: MovieListsStore
 
     var body: some View {
         NavigationStack {
@@ -41,6 +41,8 @@ struct HomeView: View {
                     }
                     .padding(.top, 8)
                     .animation(.default, value: viewModel.movies.count)
+                    .animation(.default, value: listsStore.lists)
+                    .animation(.default, value: listsStore.cachedMoviesByID)
                 }
             }
             .task {
@@ -64,7 +66,7 @@ struct HomeView: View {
 
     // Map stored IDs in a list to lightweight Movie values for display.
     // Prefer resolving from the fetched feed so we get poster/title/genre;
-    // fallback to placeholders if not present.
+    // fallback to cached metadata; finally placeholders.
     private func movies(from list: MovieList) -> [Movie] {
         // Build a quick lookup from fetched movies by id
         let indexByID: [String: Movie] = Dictionary(uniqueKeysWithValues:
@@ -74,15 +76,20 @@ struct HomeView: View {
             }
         )
 
-        // Preserve insertion order deterministically by sorting IDs
         let sortedIDs = list.movieIDs.sorted()
 
-        // Map to Movie values the UI can render
         return sortedIDs.compactMap { id in
             if let resolved = indexByID[id] {
                 return resolved
+            } else if let cached = listsStore.cachedMoviesByID[id] {
+                return Movie(
+                    id: cached.id,
+                    title: cached.title,
+                    genre: cached.genre,
+                    posterAssetName: nil,
+                    posterURL: cached.posterURLString.flatMap(URL.init(string:))
+                )
             } else {
-                // Fallback minimal Movie so poster shows placeholder and navigation works
                 return Movie(
                     id: id,
                     title: "Unknown",
@@ -97,4 +104,5 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
+        .environmentObject(MovieListsStore())
 }

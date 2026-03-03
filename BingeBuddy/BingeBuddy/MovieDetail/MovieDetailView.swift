@@ -3,8 +3,8 @@ import SwiftUI
 struct MovieDetailView: View {
     @StateObject private var viewModel: MovieDetailViewModel
 
-    // Lists store and sheet state
-    @StateObject private var listsStore = MovieListsStore()
+    // Lists store from environment
+    @EnvironmentObject private var listsStore: MovieListsStore
     @State private var showingAddToList = false
 
     init(movieID: String) {
@@ -27,6 +27,8 @@ struct MovieDetailView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
+                        // Before showing sheet, proactively cache current movie metadata
+                        cacheCurrentMovieMetadata()
                         showingAddToList = true
                     } label: {
                         Image(systemName: "plus")
@@ -52,14 +54,24 @@ struct MovieDetailView: View {
                 Text(viewModel.errorMessage ?? "Unknown error")
             })
             .sheet(isPresented: $showingAddToList) {
-                AddToListSheet(store: listsStore, movieID: viewModel.movieID)
+                AddToListSheet(movieID: viewModel.movieID)
+                    .environmentObject(listsStore)
             }
         }
+    }
+
+    private func cacheCurrentMovieMetadata() {
+        let id = viewModel.movieID
+        let title = viewModel.titleText
+        let genre = viewModel.genresText?.components(separatedBy: " • ").first ?? "My List"
+        let posterURL = viewModel.posterURL
+        listsStore.upsertCachedMovie(id: id, title: title, genre: genre, posterURL: posterURL)
     }
 }
 
 #Preview {
     NavigationStack {
         MovieDetailView(movieID: "tt0133093")
+            .environmentObject(MovieListsStore())
     }
 }

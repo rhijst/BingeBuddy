@@ -3,12 +3,14 @@ import SwiftUI
 @main
 struct BingeBuddyApp: App {
     @State private var showSplash = true
+    @StateObject private var listsStore = MovieListsStore()
 
     var body: some Scene {
         WindowGroup {
             ZStack {
                 HomeView()
                     .opacity(showSplash ? 0 : 1)
+                    .environmentObject(listsStore)
 
                 if showSplash {
                     SplashView()

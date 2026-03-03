@@ -2,14 +2,24 @@ import Foundation
 import SwiftUI
 import Combine
 
+struct CachedMovie: Codable, Hashable {
+    let id: String
+    let title: String
+    let genre: String
+    let posterURLString: String?
+}
+
 @MainActor
 final class MovieListsStore: ObservableObject {
     @AppStorage("customMovieLists") private var storedData: Data = Data()
+    @AppStorage("cachedMoviesByID") private var cachedMoviesData: Data = Data()
 
     @Published private(set) var lists: [MovieList] = []
+    @Published private(set) var cachedMoviesByID: [String: CachedMovie] = [:]
 
     init() {
         load()
+        loadCache()
         if lists.isEmpty {
             lists = [
                 MovieList(name: "Watchlist"),
@@ -32,9 +42,29 @@ final class MovieListsStore: ObservableObject {
         }
     }
 
+    private func loadCache() {
+        guard !cachedMoviesData.isEmpty else {
+            cachedMoviesByID = [:]
+            return
+        }
+        do {
+            cachedMoviesByID = try JSONDecoder().decode([String: CachedMovie].self, from: cachedMoviesData)
+        } catch {
+            cachedMoviesByID = [:]
+        }
+    }
+
     private func persist() {
         do {
             storedData = try JSONEncoder().encode(lists)
+        } catch {
+            // Handle encoding error if needed
+        }
+    }
+
+    private func persistCache() {
+        do {
+            cachedMoviesData = try JSONEncoder().encode(cachedMoviesByID)
         } catch {
             // Handle encoding error if needed
         }
@@ -69,5 +99,23 @@ final class MovieListsStore: ObservableObject {
     func contains(movieID: String, in listID: UUID) -> Bool {
         guard let list = lists.first(where: { $0.id == listID }) else { return false }
         return list.contains(movieID)
+    }
+
+    // MARK: - Metadata cache
+
+    func upsertCachedMovie(id: String, title: String, genre: String = "My List", posterURL: URL?) {
+        let cached = CachedMovie(
+            id: id,
+            title: title,
+            genre: genre,
+            posterURLString: posterURL?.absoluteString
+        )
+        cachedMoviesByID[id] = cached
+        persistCache()
+    }
+
+    func removeCachedMovie(id: String) {
+        cachedMoviesByID.removeValue(forKey: id)
+        persistCache()
     }
 }
