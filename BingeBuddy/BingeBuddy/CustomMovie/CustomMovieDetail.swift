@@ -72,7 +72,45 @@ struct CustomMovieDetail: View {
                         .foregroundStyle(.secondary)
                 }
 
-                // Notes (styled like "Plot" section)
+                // Plot
+                if let plot = movie.plot, !plot.isEmpty {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Plot")
+                            .font(.headline)
+                        Text(plot)
+                            .font(.body)
+                    }
+                }
+
+                // Credits
+                if let directors = movie.directors, !directors.isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Director(s)")
+                            .font(.headline)
+                        Text(directors.joined(separator: ", "))
+                            .font(.body)
+                    }
+                }
+
+                if let writers = movie.writers, !writers.isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Writer(s)")
+                            .font(.headline)
+                        Text(writers.joined(separator: ", "))
+                            .font(.body)
+                    }
+                }
+
+                if let actors = movie.actors, !actors.isEmpty {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Actor(s)")
+                            .font(.headline)
+                        Text(actors.joined(separator: ", "))
+                            .font(.body)
+                    }
+                }
+
+                // Notes
                 if let notes = movie.notes, !notes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Notes")

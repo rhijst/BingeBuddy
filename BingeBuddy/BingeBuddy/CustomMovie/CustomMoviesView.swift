@@ -92,7 +92,11 @@ struct CustomMoviesView: View {
                     title: newMovie.title,
                     genre: newMovie.genre,
                     notes: newMovie.notes,
-                    posterURLString: newMovie.posterURL?.absoluteString
+                    posterURLString: newMovie.posterURL?.absoluteString,
+                    plot: newMovie.plot,
+                    directorsCSV: newMovie.directors?.joined(separator: ", "),
+                    writersCSV: newMovie.writers?.joined(separator: ", "),
+                    actorsCSV: newMovie.actors?.joined(separator: ", ")
                 )
             }
         }
@@ -137,4 +141,3 @@ private extension UIWindowScene {
         return self.windows.first { $0.isKeyWindow }
     }
 }
-

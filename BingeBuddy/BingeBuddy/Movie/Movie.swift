@@ -9,8 +9,14 @@ struct Movie: Identifiable, Hashable, Codable {
     let posterAssetName: String?
     let posterURL: URL?
 
-    // Custom-only field (optional for API-provided movies)
+    // Custom-only fields (optional for API-provided movies)
     let notes: String?
+
+    // New: local-only metadata for custom movies
+    let plot: String?
+    let directors: [String]?
+    let writers: [String]?
+    let actors: [String]?
 
     init(
         id: String,
@@ -18,7 +24,11 @@ struct Movie: Identifiable, Hashable, Codable {
         genre: String,
         posterAssetName: String? = nil,
         posterURL: URL? = nil,
-        notes: String? = nil
+        notes: String? = nil,
+        plot: String? = nil,
+        directors: [String]? = nil,
+        writers: [String]? = nil,
+        actors: [String]? = nil
     ) {
         self.id = id
         self.title = title
@@ -26,6 +36,9 @@ struct Movie: Identifiable, Hashable, Codable {
         self.posterAssetName = posterAssetName
         self.posterURL = posterURL
         self.notes = notes
+        self.plot = plot
+        self.directors = directors
+        self.writers = writers
+        self.actors = actors
     }
 }
-
