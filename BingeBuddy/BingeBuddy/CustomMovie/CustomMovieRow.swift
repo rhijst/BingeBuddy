@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CustomMovieRow: View {
-    let movie: CustomMovie
+    let movie: Movie
 
     var body: some View {
         HStack(spacing: 12) {
@@ -12,7 +12,11 @@ struct CustomMovieRow: View {
                     .aspectRatio(2/3, contentMode: .fit)
                     .overlay(
                         Group {
-                            if let url = movie.posterURL {
+                            if let assetName = movie.posterAssetName {
+                                Image(assetName)
+                                    .resizable()
+                                    .scaledToFill()
+                            } else if let url = movie.posterURL {
                                 AsyncImage(url: url) { phase in
                                     switch phase {
                                     case .empty:
@@ -37,8 +41,8 @@ struct CustomMovieRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(movie.title)
                     .font(.headline)
-                if let genre = movie.genre, !genre.isEmpty {
-                    Text(genre)
+                if !movie.genre.isEmpty {
+                    Text(movie.genre)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -50,24 +54,26 @@ struct CustomMovieRow: View {
 #Preview {
     List {
         CustomMovieRow(
-            movie: CustomMovie(
-                id: UUID(),
+            movie: Movie(
+                id: "custom-\(UUID().uuidString)",
                 title: "My Custom Matrix",
                 genre: "Sci-Fi",
-                notes: "Rewatch soon.",
-                posterURLString: "https://m.media-amazon.com/images/I/71x7df0yZdL._AC_SY300_SX300_QL70_ML2_.jpg"
-                
+                posterAssetName: nil,
+                posterURL: URL(string: "https://m.media-amazon.com/images/I/71x7df0yZdL._AC_SY300_SX300_QL70_ML2_.jpg"),
+                notes: "Rewatch soon."
             )
         )
         CustomMovieRow(
-            movie: CustomMovie(
-                id: UUID(),
+            movie: Movie(
+                id: "custom-\(UUID().uuidString)",
                 title: "Untitled Project",
-                genre: nil,
-                notes: nil,
-                posterURLString: nil
+                genre: "",
+                posterAssetName: nil,
+                posterURL: nil,
+                notes: nil
             )
         )
     }
     .listStyle(.insetGrouped)
 }
+

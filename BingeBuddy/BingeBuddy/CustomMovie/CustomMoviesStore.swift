@@ -5,22 +5,18 @@ import Combine
 @MainActor
 final class CustomMoviesStore: ObservableObject {
     @AppStorage("customMovies") private var storedData: Data = Data()
-    @Published private(set) var movies: [CustomMovie] = []
+    @Published private(set) var movies: [Movie] = []
 
     init() {
         load()
     }
 
     func load() {
-        guard !storedData.isEmpty else {
-            movies = []
+        if !storedData.isEmpty, let decoded = try? JSONDecoder().decode([Movie].self, from: storedData) {
+            movies = decoded
             return
         }
-        do {
-            movies = try JSONDecoder().decode([CustomMovie].self, from: storedData)
-        } catch {
-            movies = []
-        }
+        movies = []
     }
 
     private func persist() {
@@ -35,12 +31,22 @@ final class CustomMoviesStore: ObservableObject {
     func create(title: String, genre: String?, notes: String?, posterURLString: String?) {
         let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
-        let item = CustomMovie(title: trimmed, genre: genre?.nilIfBlank, notes: notes?.nilIfBlank, posterURLString: posterURLString?.nilIfBlank)
+
+        let id = "custom-\(UUID().uuidString)"
+        let url = posterURLString?.nilIfBlank.flatMap(URL.init(string:))
+        let item = Movie(
+            id: id,
+            title: trimmed,
+            genre: (genre?.nilIfBlank) ?? "",
+            posterAssetName: nil,
+            posterURL: url,
+            notes: notes?.nilIfBlank
+        )
         movies.append(item)
         persist()
     }
 
-    func update(_ movie: CustomMovie) {
+    func update(_ movie: Movie) {
         guard let idx = movies.firstIndex(where: { $0.id == movie.id }) else { return }
         movies[idx] = movie
         persist()
@@ -51,7 +57,7 @@ final class CustomMoviesStore: ObservableObject {
         persist()
     }
 
-    func delete(_ movie: CustomMovie) {
+    func delete(_ movie: Movie) {
         guard let idx = movies.firstIndex(of: movie) else { return }
         movies.remove(at: idx)
         persist()
@@ -63,9 +69,19 @@ final class CustomMoviesStore: ObservableObject {
     }
 }
 
+// Temporary type for migration from old storage
+private struct LegacyCustomMovie: Identifiable, Codable, Hashable {
+    var id: UUID
+    var title: String
+    var genre: String?
+    var notes: String?
+    var posterURLString: String?
+}
+
 private extension String {
     var nilIfBlank: String? {
         let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }
 }
+

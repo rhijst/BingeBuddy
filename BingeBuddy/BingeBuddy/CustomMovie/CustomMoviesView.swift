@@ -92,19 +92,19 @@ struct CustomMoviesView: View {
                     title: newMovie.title,
                     genre: newMovie.genre,
                     notes: newMovie.notes,
-                    posterURLString: newMovie.posterURLString
+                    posterURLString: newMovie.posterURL?.absoluteString
                 )
             }
         }
 
     }
 
-    private var filteredAndSorted: [CustomMovie] {
+    private var filteredAndSorted: [Movie] {
         let base = store.movies.filter { movie in
             guard !searchText.isEmpty else { return true }
             let needle = searchText.lowercased()
             return movie.title.lowercased().contains(needle)
-                || (movie.genre?.lowercased().contains(needle) ?? false)
+                || movie.genre.lowercased().contains(needle)
                 || (movie.notes?.lowercased().contains(needle) ?? false)
         }
         return base.sorted { a, b in
@@ -116,7 +116,7 @@ struct CustomMoviesView: View {
         }
     }
 
-    private func presentEdit(_ movie: CustomMovie) {
+    private func presentEdit(_ movie: Movie) {
         // Present a single-use sheet for editing
         // Use an ephemeral binding via a separate window
         let item = movie
@@ -137,3 +137,4 @@ private extension UIWindowScene {
         return self.windows.first { $0.isKeyWindow }
     }
 }
+

@@ -1,11 +1,12 @@
 import SwiftUI
 
 struct CustomMovieDetail: View {
-    let movie: CustomMovie
+    let movie: Movie
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
+                // Poster (mirrors portrait detail view behavior)
                 if let url = movie.posterURL {
                     AsyncImage(url: url) { phase in
                         switch phase {
@@ -13,14 +14,19 @@ struct CustomMovieDetail: View {
                             ZStack {
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.15))
+                                    .frame(maxWidth: .infinity)
                                     .aspectRatio(2/3, contentMode: .fit)
                                 ProgressView()
                             }
-                        case .success(let img):
-                            img.resizable().scaledToFit().cornerRadius(10)
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFit()
+                                .cornerRadius(10)
                         case .failure:
                             Rectangle()
                                 .fill(Color.gray.opacity(0.15))
+                                .frame(maxWidth: .infinity)
                                 .aspectRatio(2/3, contentMode: .fit)
                                 .overlay(
                                     Image(systemName: "film")
@@ -33,17 +39,40 @@ struct CustomMovieDetail: View {
                             EmptyView()
                         }
                     }
+                } else if let assetName = movie.posterAssetName, !assetName.isEmpty {
+                    // Local asset fallback if provided
+                    Image(assetName)
+                        .resizable()
+                        .scaledToFit()
+                        .cornerRadius(10)
+                } else {
+                    // Placeholder when there is no poster
+                    Rectangle()
+                        .fill(Color.gray.opacity(0.15))
+                        .frame(maxWidth: .infinity)
+                        .aspectRatio(2/3, contentMode: .fit)
+                        .overlay(
+                            Image(systemName: "film")
+                                .resizable()
+                                .scaledToFit()
+                                .padding(24)
+                                .foregroundStyle(.secondary)
+                        )
                 }
 
+                // Title
                 Text(movie.title)
                     .font(.title2.weight(.semibold))
+                    .accessibilityAddTraits(.isHeader)
 
-                if let genre = movie.genre, !genre.isEmpty {
-                    Text(genre)
+                // Genres
+                if !movie.genre.isEmpty {
+                    Text(movie.genre)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
 
+                // Notes (styled like "Plot" section)
                 if let notes = movie.notes, !notes.isEmpty {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Notes")

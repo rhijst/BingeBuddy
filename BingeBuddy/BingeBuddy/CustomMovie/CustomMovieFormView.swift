@@ -8,8 +8,8 @@ struct CustomMovieFormView: View {
     @State private var notes: String
     @State private var posterURLString: String
 
-    let onSave: (CustomMovie) -> Void
-    private var editingMovie: CustomMovie?
+    let onSave: (Movie) -> Void
+    private var editingMovie: Movie?
 
     private let allGenres: [String] = [
         "Action",
@@ -42,14 +42,14 @@ struct CustomMovieFormView: View {
     ]
 
     init(
-        movie: CustomMovie? = nil,
-        onSave: @escaping (CustomMovie) -> Void
+        movie: Movie? = nil,
+        onSave: @escaping (Movie) -> Void
     ) {
         self.onSave = onSave
         self._title = State(initialValue: movie?.title ?? "")
         self._genre = State(initialValue: movie?.genre ?? "")
         self._notes = State(initialValue: movie?.notes ?? "")
-        self._posterURLString = State(initialValue: movie?.posterURLString ?? "")
+        self._posterURLString = State(initialValue: movie?.posterURL?.absoluteString ?? "")
         self.editingMovie = movie
     }
 
@@ -61,7 +61,6 @@ struct CustomMovieFormView: View {
 
                     // Genre drop-down (single selection)
                     Picker("Genre (optional)", selection: $genre) {
-                        // Empty option to allow clearing genre
                         Text("None").tag("")
                         ForEach(allGenres, id: \.self) { g in
                             Text(g).tag(g)
@@ -85,12 +84,16 @@ struct CustomMovieFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        let model = CustomMovie(
-                            id: editingMovie?.id ?? UUID(),
-                            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-                            genre: genre.nilIfBlank,
-                            notes: notes.nilIfBlank,
-                            posterURLString: posterURLString.nilIfBlank
+                        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
+                        let newURL = posterURLString.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : URL(string: posterURLString)
+
+                        let model = Movie(
+                            id: editingMovie?.id ?? "custom-\(UUID().uuidString)",
+                            title: trimmedTitle,
+                            genre: genre, // empty string allowed for "None"
+                            posterAssetName: nil,
+                            posterURL: newURL,
+                            notes: notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes
                         )
                         onSave(model)
                         dismiss()
@@ -102,9 +105,3 @@ struct CustomMovieFormView: View {
     }
 }
 
-private extension String {
-    var nilIfBlank: String? {
-        let trimmed = trimmingCharacters(in: .whitespacesAndNewlines)
-        return trimmed.isEmpty ? nil : trimmed
-    }
-}
