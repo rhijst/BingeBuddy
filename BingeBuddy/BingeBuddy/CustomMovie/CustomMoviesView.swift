@@ -45,6 +45,7 @@ struct CustomMoviesView: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 8)
+            .padding(.bottom, 12)
 
             // List
             List {
@@ -84,6 +85,7 @@ struct CustomMoviesView: View {
             }
             .listStyle(.insetGrouped)
         }
+
         .sheet(isPresented: $showingAdd) {
             CustomMovieFormView { newMovie in
                 store.create(
@@ -94,6 +96,7 @@ struct CustomMoviesView: View {
                 )
             }
         }
+
     }
 
     private var filteredAndSorted: [CustomMovie] {
@@ -126,124 +129,6 @@ struct CustomMoviesView: View {
            let window = scene.keyWindow {
             window.rootViewController?.present(controller, animated: true)
         }
-    }
-}
-
-// Helpers
-
-private struct CustomMovieRow: View {
-    let movie: CustomMovie
-
-    var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.15))
-                    .frame(width: 60)
-                    .aspectRatio(2/3, contentMode: .fit)
-                    .overlay(
-                        Group {
-                            if let url = movie.posterURL {
-                                AsyncImage(url: url) { phase in
-                                    switch phase {
-                                    case .empty:
-                                        ProgressView()
-                                    case .success(let img):
-                                        img.resizable().scaledToFill()
-                                    case .failure:
-                                        Image(systemName: "film")
-                                            .resizable()
-                                            .scaledToFit()
-                                            .padding(10)
-                                            .foregroundStyle(.secondary)
-                                    @unknown default:
-                                        EmptyView()
-                                    }
-                                }
-                            } else {
-                                Image(systemName: "film")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding(10)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    )
-                    .clipped()
-                    .cornerRadius(6)
-            }
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(movie.title)
-                    .font(.headline)
-                if let genre = movie.genre, !genre.isEmpty {
-                    Text(genre)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-            }
-        }
-    }
-}
-
-private struct CustomMovieDetail: View {
-    let movie: CustomMovie
-
-    var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                if let url = movie.posterURL {
-                    AsyncImage(url: url) { phase in
-                        switch phase {
-                        case .empty:
-                            ZStack {
-                                Rectangle()
-                                    .fill(Color.gray.opacity(0.15))
-                                    .aspectRatio(2/3, contentMode: .fit)
-                                ProgressView()
-                            }
-                        case .success(let img):
-                            img.resizable().scaledToFit().cornerRadius(10)
-                        case .failure:
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.15))
-                                .aspectRatio(2/3, contentMode: .fit)
-                                .overlay(
-                                    Image(systemName: "film")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .padding(24)
-                                        .foregroundStyle(.secondary)
-                                )
-                        @unknown default:
-                            EmptyView()
-                        }
-                    }
-                }
-
-                Text(movie.title)
-                    .font(.title2.weight(.semibold))
-
-                if let genre = movie.genre, !genre.isEmpty {
-                    Text(genre)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let notes = movie.notes, !notes.isEmpty {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Notes")
-                            .font(.headline)
-                        Text(notes)
-                            .font(.body)
-                    }
-                }
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .navigationTitle("Custom Movie")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -11,6 +11,36 @@ struct CustomMovieFormView: View {
     let onSave: (CustomMovie) -> Void
     private var editingMovie: CustomMovie?
 
+    private let allGenres: [String] = [
+        "Action",
+        "Adventure",
+        "Animation",
+        "Biography",
+        "Comedy",
+        "Crime",
+        "Documentary",
+        "Drama",
+        "Family",
+        "Fantasy",
+        "Film-Noir",
+        "Game-Show",
+        "History",
+        "Horror",
+        "Music",
+        "Musical",
+        "Mystery",
+        "News",
+        "Reality-TV",
+        "Romance",
+        "Sci-Fi",
+        "Short",
+        "Sport",
+        "Talk-Show",
+        "Thriller",
+        "War",
+        "Western"
+    ]
+
     init(
         movie: CustomMovie? = nil,
         onSave: @escaping (CustomMovie) -> Void
@@ -28,7 +58,16 @@ struct CustomMovieFormView: View {
             Form {
                 Section("Details") {
                     TextField("Title", text: $title)
-                    TextField("Genre (optional)", text: $genre)
+
+                    // Genre drop-down (single selection)
+                    Picker("Genre (optional)", selection: $genre) {
+                        // Empty option to allow clearing genre
+                        Text("None").tag("")
+                        ForEach(allGenres, id: \.self) { g in
+                            Text(g).tag(g)
+                        }
+                    }
+
                     TextField("Poster URL (optional)", text: $posterURLString)
                         .keyboardType(.URL)
                         .textInputAutocapitalization(.never)
@@ -46,7 +85,7 @@ struct CustomMovieFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        var model = CustomMovie(
+                        let model = CustomMovie(
                             id: editingMovie?.id ?? UUID(),
                             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
                             genre: genre.nilIfBlank,
