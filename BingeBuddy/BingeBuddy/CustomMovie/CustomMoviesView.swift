@@ -51,7 +51,7 @@ struct CustomMoviesView: View {
             List {
                 ForEach(filteredAndSorted) { movie in
                     NavigationLink {
-                        CustomMovieDetail(movie: movie)
+                        CustomMovieDetailView(movie: movie)
                     } label: {
                         CustomMovieRow(movie: movie)
                     }
