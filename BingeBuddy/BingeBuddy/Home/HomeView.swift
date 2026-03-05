@@ -2,7 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @StateObject private var viewModel = HomeViewModel()
-    @EnvironmentObject private var listsStore: MovieListsStore
+    @EnvironmentObject private var listsStore: LocalMovieLists
 
     var body: some View {
         NavigationStack {
@@ -23,9 +23,9 @@ struct HomeView: View {
                                     .padding(.horizontal, 16)
                             } else {
                                 ForEach(listsStore.lists) { list in
-                                    let moviesForList = movies(from: list)
+                                    let moviesForList = getLocalMovies(from: list)
                                     if !moviesForList.isEmpty {
-                                        MovieSectionView(title: list.name, movies: moviesForList)
+                                        MovieHorizontalScrollView(title: list.name, movies: moviesForList)
                                     }
                                 }
                             }
@@ -54,7 +54,7 @@ struct HomeView: View {
                             }
 
                             ForEach(viewModel.groupedMovies, id: \.genre) { group in
-                                MovieSectionView(title: group.genre, movies: group.movies)
+                                MovieHorizontalScrollView(title: group.genre, movies: group.movies)
                             }
                         }
                         .padding(.top, 8)
@@ -79,7 +79,7 @@ struct HomeView: View {
         }
     }
 
-    // A small helper to keep section headers consistent
+    // Helper function to keep section headers consistent
     @ViewBuilder
     private func sectionHeader(_ title: String, size: CGFloat = 18) -> some View {
         Text(title)
@@ -91,12 +91,10 @@ struct HomeView: View {
     // Map stored IDs in a list to lightweight Movie values for display.
     // Prefer resolving from the fetched feed so we get poster/title/genre;
     // fallback to cached metadata; finally placeholders.
-    private func movies(from list: MovieList) -> [Movie] {
+    private func getLocalMovies(from list: MovieList) -> [Movie] {
         // Build a quick lookup from fetched movies by id
-        let indexByID: [String: Movie] = Dictionary(uniqueKeysWithValues:
-            viewModel.movies.compactMap { movie in
-                return (movie.id, movie)
-            }
+        let indexByID = Dictionary(
+            uniqueKeysWithValues: viewModel.movies.map { ($0.id, $0) }
         )
 
         let sortedIDs = list.movieIDs.sorted()
@@ -127,6 +125,6 @@ struct HomeView: View {
 
 #Preview {
     HomeView()
-        .environmentObject(MovieListsStore())
+        .environmentObject(LocalMovieLists())
         .environmentObject(CustomMoviesStore())
 }

@@ -45,7 +45,6 @@ struct MoviePosterView: View {
                                     }
                                 }
                             } else {
-                                // Als er geen lokale asset is, kan hier later een AsyncImage met URL komen
                                 Image(systemName: "film")
                                     .resizable()
                                     .scaledToFit()

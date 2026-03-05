@@ -12,7 +12,7 @@ struct Movie: Identifiable, Hashable, Codable {
     // Custom-only fields (optional for API-provided movies)
     let notes: String?
 
-    // New: local-only metadata for custom movies
+    // local-only metadata for custom movies
     let plot: String?
     let directors: [String]?
     let writers: [String]?

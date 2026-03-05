@@ -2,15 +2,8 @@ import Foundation
 import SwiftUI
 import Combine
 
-struct CachedMovie: Codable, Hashable {
-    let id: String
-    let title: String
-    let genre: String
-    let posterURLString: String?
-}
-
 @MainActor
-final class MovieListsStore: ObservableObject {
+final class LocalMovieLists: ObservableObject {
     @AppStorage("customMovieLists") private var storedData: Data = Data()
     @AppStorage("cachedMoviesByID") private var cachedMoviesData: Data = Data()
 
@@ -25,7 +18,7 @@ final class MovieListsStore: ObservableObject {
                 MovieList(name: "Watchlist"),
                 MovieList(name: "Favorites")
             ]
-            persist()
+            saveListsToLocalStorage()
         }
     }
 
@@ -54,11 +47,11 @@ final class MovieListsStore: ObservableObject {
         }
     }
 
-    private func persist() {
+    private func saveListsToLocalStorage() {
         do {
             storedData = try JSONEncoder().encode(lists)
         } catch {
-            // Handle encoding error if needed
+            print("Failed saving list to storage")
         }
     }
 
@@ -66,34 +59,38 @@ final class MovieListsStore: ObservableObject {
         do {
             cachedMoviesData = try JSONEncoder().encode(cachedMoviesByID)
         } catch {
-            // Handle encoding error if needed
+            print("Failed caching movies")
         }
     }
 
     func createList(named name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+        
         lists.append(MovieList(name: trimmed))
-        persist()
+        saveListsToLocalStorage()
     }
 
     func deleteLists(at offsets: IndexSet) {
         lists.remove(atOffsets: offsets)
-        persist()
+        saveListsToLocalStorage()
     }
 
     func renameList(id: UUID, to newName: String) {
         guard let idx = lists.firstIndex(where: { $0.id == id }) else { return }
+        
         let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+        
         lists[idx].name = trimmed
-        persist()
+        saveListsToLocalStorage()
     }
 
     func toggle(movieID: String, in listID: UUID) {
         guard let idx = lists.firstIndex(where: { $0.id == listID }) else { return }
+        
         lists[idx].toggle(movieID: movieID)
-        persist()
+        saveListsToLocalStorage()
     }
 
     func contains(movieID: String, in listID: UUID) -> Bool {
@@ -103,7 +100,7 @@ final class MovieListsStore: ObservableObject {
 
     // MARK: - Metadata cache
 
-    func upsertCachedMovie(id: String, title: String, genre: String = "My List", posterURL: URL?) {
+    func updateInsertCachedMovie(id: String, title: String, genre: String = "My List", posterURL: URL?) {
         let cached = CachedMovie(
             id: id,
             title: title,

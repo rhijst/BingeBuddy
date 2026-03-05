@@ -33,10 +33,10 @@ struct PersonFilmographyView: View {
                                     LazyHStack(alignment: .top, spacing: 12) {
                                         ForEach(movies) { movie in
                                             NavigationLink {
-                                                MovieDetailView(movieID: movie.id ?? "")
+                                                MovieDetailView(movieID: movie.id)
                                             } label: {
                                                 MoviePosterView(movie: movie)
-                                                    .frame(width: 120) // match your poster width
+                                                    .frame(width: 120)
                                             }
                                             .buttonStyle(.plain)
                                         }

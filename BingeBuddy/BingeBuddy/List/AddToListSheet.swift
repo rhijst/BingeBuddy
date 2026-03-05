@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct AddToListSheet: View {
-    @EnvironmentObject var store: MovieListsStore
+    @EnvironmentObject var localLists: LocalMovieLists
     let movieID: String
     @State private var newListName: String = ""
 
@@ -15,7 +15,7 @@ struct AddToListSheet: View {
                     Button {
                         let name = newListName
                         newListName = ""
-                        store.createList(named: name)
+                        localLists.createList(named: name)
                     } label: {
                         Label("Add", systemImage: "plus.circle.fill")
                     }
@@ -25,14 +25,14 @@ struct AddToListSheet: View {
 
                 // Lists
                 List {
-                    ForEach(store.lists) { list in
+                    ForEach(localLists.lists) { list in
                         Button {
-                            store.toggle(movieID: movieID, in: list.id)
+                            localLists.toggle(movieID: movieID, in: list.id)
                         } label: {
                             HStack {
                                 Text(list.name)
                                 Spacer()
-                                if store.contains(movieID: movieID, in: list.id) {
+                                if localLists.contains(movieID: movieID, in: list.id) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .foregroundStyle(.tint)
                                 } else {
@@ -43,7 +43,7 @@ struct AddToListSheet: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    .onDelete(perform: store.deleteLists)
+                    .onDelete(perform: localLists.deleteLists)
                 }
             }
             .navigationTitle("Add to List")

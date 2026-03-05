@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct MovieSectionView: View {
+struct MovieHorizontalScrollView: View {
     let title: String
     let movies: [Movie]
 
@@ -29,7 +29,7 @@ struct MovieSectionView: View {
 }
 
 #Preview {
-    MovieSectionView(
+    MovieHorizontalScrollView(
         title: "Popular",
         movies: [
             Movie(

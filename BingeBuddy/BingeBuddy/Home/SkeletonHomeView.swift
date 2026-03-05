@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct SkeletonHomeView: View {
-    // Show 3–4 sections with a few placeholder cards each
     private let sectionCount = 4
     private let itemsPerRow = 6
 
@@ -9,12 +8,14 @@ struct SkeletonHomeView: View {
         LazyVStack(alignment: .leading, spacing: 20) {
             ForEach(0..<sectionCount, id: \.self) { _ in
                 VStack(alignment: .leading, spacing: 12) {
-                    // Fake section title
+                    
+                    // Section title
                     RoundedRectangle(cornerRadius: 6)
                         .fill(Color.gray.opacity(0.2))
                         .frame(width: 120, height: 18)
                         .padding(.horizontal, 16)
 
+                    
                     ScrollView(.horizontal, showsIndicators: false) {
                         LazyHStack(spacing: 12) {
                             ForEach(0..<itemsPerRow, id: \.self) { _ in

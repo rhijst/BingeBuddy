@@ -95,8 +95,11 @@ final class MovieDetailViewModel: ObservableObject {
     // MARK: - Networking
 
     private func fetchDetail(for id: String) async throws -> DetailedTitleDTO {
-        let base = "https://api.imdbapi.dev/titles/"
-        guard let url = URL(string: base + id) else {
+        guard let components = URLComponents(string: "https://api.imdbapi.dev/titles/\(id)") else {
+            throw URLError(.badURL)
+        }
+
+        guard let url = components.url else {
             throw URLError(.badURL)
         }
 
@@ -105,12 +108,31 @@ final class MovieDetailViewModel: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+
+        guard let http = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
+        }
+
+        // Check for status code 2xx range
+        guard (200...299).contains(http.statusCode) else {
+            throw URLError(.badServerResponse, userInfo: ["statusCode": http.statusCode])
+        }
+
+        guard http.statusCode != 404 else {
+            throw URLError(.resourceUnavailable)
+        }
+
+        guard http.statusCode != 500 else {
+            throw URLError(.cannotConnectToHost)
         }
 
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .useDefaultKeys
-        return try decoder.decode(DetailedTitleDTO.self, from: data)
+
+        do {
+            return try decoder.decode(DetailedTitleDTO.self, from: data)
+        } catch {
+            throw URLError(.cannotDecodeContentData)
+        }
     }
 }

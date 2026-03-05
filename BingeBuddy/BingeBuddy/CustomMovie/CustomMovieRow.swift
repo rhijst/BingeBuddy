@@ -41,7 +41,7 @@ struct CustomMovieRow: View {
             VStack(alignment: .leading, spacing: 4) {
                 Text(movie.title)
                     .font(.headline)
-                if !movie.genre.isEmpty {
+                if (!movie.genre.isEmpty) {
                     Text(movie.genre)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)

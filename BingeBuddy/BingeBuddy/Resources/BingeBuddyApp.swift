@@ -3,7 +3,7 @@ import SwiftUI
 @main
 struct BingeBuddyApp: App {
     @State private var showSplash = true
-    @StateObject private var listsStore = MovieListsStore()
+    @StateObject private var listsStore = LocalMovieLists()
     @StateObject private var customMoviesStore = CustomMoviesStore()
 
     var body: some Scene {

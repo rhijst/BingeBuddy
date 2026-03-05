@@ -33,8 +33,13 @@ final class PersonFilmographyViewModel: ObservableObject {
     }
 
     private func fetchFilmography(for id: String) async throws -> NamesFilmographyResponse {
-        let base = "https://api.imdbapi.dev/names/"
-        guard let url = URL(string: base + id + "/filmography") else {
+        guard var components = URLComponents(string: "https://api.imdbapi.dev/names") else {
+            throw URLError(.badURL)
+        }
+
+        components.path += "/\(id)/filmography"
+
+        guard let url = components.url else {
             throw URLError(.badURL)
         }
 
@@ -43,13 +48,32 @@ final class PersonFilmographyViewModel: ObservableObject {
         request.setValue("application/json", forHTTPHeaderField: "Accept")
 
         let (data, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+
+        guard let http = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
+        }
+
+        // Check for status code 2xx range
+        guard (200...299).contains(http.statusCode) else {
+            throw URLError(.badServerResponse, userInfo: ["statusCode": http.statusCode])
+        }
+
+        guard http.statusCode != 404 else {
+            throw URLError(.resourceUnavailable)
+        }
+
+        guard http.statusCode != 500 else {
+            throw URLError(.cannotConnectToHost)
         }
 
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .useDefaultKeys
-        return try decoder.decode(NamesFilmographyResponse.self, from: data)
+
+        do {
+            return try decoder.decode(NamesFilmographyResponse.self, from: data)
+        } catch {
+            throw URLError(.cannotDecodeContentData)
+        }
     }
 
     // Show each title only once by deduplicating on the title id (preserving order).

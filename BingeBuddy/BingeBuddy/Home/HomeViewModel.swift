@@ -83,7 +83,7 @@ final class HomeViewModel: ObservableObject {
             throw URLError(.badServerResponse, userInfo: ["statusCode": http.statusCode])
         }
         
-        // Optionally, you can check for specific status codes if needed, e.g.
+        // Optionally, you can check for specific status codes if needed
         guard http.statusCode != 404 else {
             throw URLError(.resourceUnavailable)
         }

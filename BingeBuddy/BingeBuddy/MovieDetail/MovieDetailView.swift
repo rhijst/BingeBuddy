@@ -4,7 +4,7 @@ struct MovieDetailView: View {
     @StateObject private var viewModel: MovieDetailViewModel
 
     // Lists store from environment
-    @EnvironmentObject private var listsStore: MovieListsStore
+    @EnvironmentObject private var listsStore: LocalMovieLists
     @State private var showingAddToList = false
 
     init(movieID: String) {
@@ -65,13 +65,13 @@ struct MovieDetailView: View {
         let title = viewModel.titleText
         let genre = viewModel.genresText?.components(separatedBy: " • ").first ?? "My List"
         let posterURL = viewModel.posterURL
-        listsStore.upsertCachedMovie(id: id, title: title, genre: genre, posterURL: posterURL)
+        listsStore.updateInsertCachedMovie(id: id, title: title, genre: genre, posterURL: posterURL)
     }
 }
 
 #Preview {
     NavigationStack {
         MovieDetailView(movieID: "tt0133093")
-            .environmentObject(MovieListsStore())
+            .environmentObject(LocalMovieLists())
     }
 }
