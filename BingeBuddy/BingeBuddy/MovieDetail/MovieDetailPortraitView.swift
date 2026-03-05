@@ -2,6 +2,11 @@ import SwiftUI
 
 struct MovieDetailPortraitView: View {
     @ObservedObject var viewModel: MovieDetailViewModel
+    @Environment(\.horizontalSizeClass) private var hSize
+
+    private var isRegularWidth: Bool { hSize == .regular }
+    // Cap width on iPad; keep full width on iPhone
+    private var posterMaxWidth: CGFloat? { isRegularWidth ? 420 : nil }
 
     var body: some View {
         ScrollView {
@@ -14,19 +19,21 @@ struct MovieDetailPortraitView: View {
                             ZStack {
                                 Rectangle()
                                     .fill(Color.gray.opacity(0.15))
-                                    .frame(maxWidth: .infinity)
                                     .aspectRatio(2/3, contentMode: .fit)
                                 ProgressView()
                             }
+                            .frame(maxWidth: posterMaxWidth)
+                            .frame(maxWidth: .infinity)
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFit()
                                 .cornerRadius(10)
+                                .frame(maxWidth: posterMaxWidth)
+                                .frame(maxWidth: .infinity)
                         case .failure:
                             Rectangle()
                                 .fill(Color.gray.opacity(0.15))
-                                .frame(maxWidth: .infinity)
                                 .aspectRatio(2/3, contentMode: .fit)
                                 .overlay(
                                     Image(systemName: "film")
@@ -35,6 +42,8 @@ struct MovieDetailPortraitView: View {
                                         .padding(24)
                                         .foregroundStyle(.secondary)
                                 )
+                                .frame(maxWidth: posterMaxWidth)
+                                .frame(maxWidth: .infinity)
                         @unknown default:
                             EmptyView()
                         }
