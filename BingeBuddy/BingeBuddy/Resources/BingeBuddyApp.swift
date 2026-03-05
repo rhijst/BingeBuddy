@@ -4,6 +4,7 @@ import SwiftUI
 struct BingeBuddyApp: App {
     @State private var showSplash = true
     @StateObject private var listsStore = MovieListsStore()
+    @StateObject private var customMoviesStore = CustomMoviesStore()
 
     var body: some Scene {
         WindowGroup {
@@ -11,6 +12,7 @@ struct BingeBuddyApp: App {
                 HomeView()
                     .opacity(showSplash ? 0 : 1)
                     .environmentObject(listsStore)
+                    .environmentObject(customMoviesStore)
 
                 if showSplash {
                     SplashView()
@@ -18,9 +20,7 @@ struct BingeBuddyApp: App {
                 }
             }
             .onAppear {
-                // Keep splash for a short time, then fade out
                 Task { @MainActor in
-                    // Minimum visible time
                     try? await Task.sleep(for: .milliseconds(1200))
                     withAnimation(.easeInOut(duration: 0.4)) {
                         showSplash = false

@@ -6,51 +6,73 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                if viewModel.isLoading {
-                    SkeletonHomeView()
-                        .padding(.top, 8)
-                        .accessibilityHidden(true)
-                } else {
-                    LazyVStack(alignment: .leading, spacing: 20) {
-                        // Your Lists section
-                        if(!listsStore.lists.isEmpty){
-                            sectionHeader("Your Lists",size: 30)
+            TabView {
+                // Tab 1: Your Lists
+                ScrollView {
+                    if viewModel.isLoading {
+                        SkeletonHomeView()
+                            .padding(.top, 8)
+                            .accessibilityHidden(true)
+                    } else {
+                        LazyVStack(alignment: .leading, spacing: 20) {
+                            sectionHeader("Your Lists", size: 30)
                                 .padding(.horizontal, 16)
 
-                            ForEach(listsStore.lists) { list in
-                                let moviesForList = movies(from: list)
-                                if !moviesForList.isEmpty {
-                                    MovieSectionView(title: list.name, movies: moviesForList)
+                            if listsStore.lists.isEmpty {
+                                Text("You don't have any lists yet.")
+                                    .padding(.horizontal, 16)
+                            } else {
+                                ForEach(listsStore.lists) { list in
+                                    let moviesForList = movies(from: list)
+                                    if !moviesForList.isEmpty {
+                                        MovieSectionView(title: list.name, movies: moviesForList)
+                                    }
                                 }
                             }
-
-                            Divider()
-                                .padding(.horizontal, 16)
-                                .padding(.top, 4)
                         }
-
-                        // Popular section
-                        sectionHeader("Most Popular Movies",size: 30)
-                            .padding(.horizontal, 16)
-
-                        if(viewModel.groupedMovies.count <= 0){
-                            Text("Something went wrong loading the movies... Please try again later.")
-                                .padding(.horizontal, 16)
-                        }
-                        
-                        // Existing genre sections
-                        ForEach(viewModel.groupedMovies, id: \.genre) { group in
-                            MovieSectionView(title: group.genre, movies: group.movies)
-                        }
+                        .padding(.top, 8)
                     }
-                    .padding(.top, 8)
                 }
+                .tabItem {
+                    Label("Your Lists", systemImage: "list.bullet")
+                }
+
+                // Tab 2: Most Popular Movies
+                ScrollView {
+                    if viewModel.isLoading {
+                        SkeletonHomeView()
+                            .padding(.top, 8)
+                            .accessibilityHidden(true)
+                    } else {
+                        LazyVStack(alignment: .leading, spacing: 20) {
+                            sectionHeader("Most Popular Movies", size: 30)
+                                .padding(.horizontal, 16)
+
+                            if viewModel.groupedMovies.count <= 0 {
+                                Text("Something went wrong loading the movies... Please try again later.")
+                                    .padding(.horizontal, 16)
+                            }
+
+                            ForEach(viewModel.groupedMovies, id: \.genre) { group in
+                                MovieSectionView(title: group.genre, movies: group.movies)
+                            }
+                        }
+                        .padding(.top, 8)
+                    }
+                }
+                .tabItem {
+                    Label("Popular", systemImage: "star.fill")
+                }
+
+                // Tab 3: Custom Movies (CRUD)
+                CustomMoviesView()
+                    .tabItem {
+                        Label("Custom", systemImage: "square.and.pencil")
+                    }
             }
             .task {
                 await viewModel.load()
             }
-            // Define navigation destinations at the NavigationStack level
             .navigationDestination(for: String.self) { movieID in
                 MovieDetailView(movieID: movieID)
             }
@@ -106,4 +128,5 @@ struct HomeView: View {
 #Preview {
     HomeView()
         .environmentObject(MovieListsStore())
+        .environmentObject(CustomMoviesStore())
 }
