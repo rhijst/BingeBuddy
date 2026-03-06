@@ -34,45 +34,21 @@ struct HomeView: View {
             .task {
                 await viewModel.load()
             }
+            // New routing based on full Movie value
+            .navigationDestination(for: Movie.self) { movie in
+                if movie.id.hasPrefix("tt") {
+                    MovieDetailView(movieID: movie.id)
+                } else {
+                    CustomMovieDetailView(movie: movie)
+                }
+            }
+            // Keep existing String destination if something else still links by ID
             .navigationDestination(for: String.self) { movieID in
                 MovieDetailView(movieID: movieID)
             }
         }
     }
-    
-    // Map stored IDs in a list to lightweight Movie values for display.
-    // Prefer resolving from the fetched feed so we get poster/title/genre;
-    // fallback to cached metadata; finally placeholders.
-    func getLocalMovies(from list: MovieList) -> [Movie] {
-        // Build a quick lookup from fetched movies by id
-        let indexByID = Dictionary(
-            uniqueKeysWithValues: viewModel.movies.map { ($0.id, $0) }
-        )
-        
-        let sortedIDs = list.movieIDs.sorted()
-        
-        return sortedIDs.compactMap { id in
-            if let resolved = indexByID[id] {
-                return resolved
-            } else if let cached = listsStore.cachedMoviesByID[id] {
-                return Movie(
-                    id: cached.id,
-                    title: cached.title,
-                    genre: cached.genre,
-                    posterAssetName: nil,
-                    posterURL: cached.posterURLString.flatMap(URL.init(string:))
-                )
-            } else {
-                return Movie(
-                    id: id,
-                    title: "Unknown",
-                    genre: "My List",
-                    posterAssetName: nil,
-                    posterURL: nil
-                )
-            }
-        }
-    }
+
 }
 
 struct SectionHeader: View {
@@ -98,4 +74,3 @@ struct SectionHeader: View {
         .environmentObject(LocalMovieLists())
         .environmentObject(CustomMoviesStore())
 }
-

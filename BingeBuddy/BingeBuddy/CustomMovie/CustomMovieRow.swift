@@ -3,6 +3,9 @@ import SwiftUI
 struct CustomMovieRow: View {
     let movie: Movie
 
+    @EnvironmentObject private var listsStore: LocalMovieLists
+    @State private var showingAddToList = false
+
     // Consistent thumbnail size (2:3 aspect)
     private let thumbWidth: CGFloat = 100
     private var thumbHeight: CGFloat { thumbWidth * 1.5 }
@@ -62,6 +65,41 @@ struct CustomMovieRow: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Quick add button
+            Button {
+                // Cache minimal metadata before presenting the sheet
+                listsStore.updateInsertCachedMovie(
+                    id: movie.id,
+                    title: movie.title,
+                    genre: movie.genre.isEmpty ? "My List" : movie.genre,
+                    posterURL: movie.posterURL
+                )
+                showingAddToList = true
+            } label: {
+                Image(systemName: "plus.circle")
+                    .imageScale(.large)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("Add to list")
+        }
+        // Context menu alternative entry point
+        .contextMenu {
+            Button {
+                listsStore.updateInsertCachedMovie(
+                    id: movie.id,
+                    title: movie.title,
+                    genre: movie.genre.isEmpty ? "My List" : movie.genre,
+                    posterURL: movie.posterURL
+                )
+                showingAddToList = true
+            } label: {
+                Label("Add to list", systemImage: "plus")
+            }
+        }
+        .sheet(isPresented: $showingAddToList) {
+            AddToListSheet(movieID: movie.id)
+                .environmentObject(listsStore)
         }
     }
 }
@@ -89,5 +127,6 @@ struct CustomMovieRow: View {
             )
         )
     }
+    .environmentObject(LocalMovieLists())
     .listStyle(.insetGrouped)
 }

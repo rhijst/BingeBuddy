@@ -15,11 +15,11 @@ struct MovieHorizontalScrollView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 12) {
                     ForEach(movies) { movie in
-                        NavigationLink(value: movie.id) {
+                        NavigationLink(value: movie) {
                             MoviePosterView(movie: movie)
                                 .frame(width: 120)
                         }
-                        .tint(.primary) 
+                        .tint(.primary)
                     }
                 }
                 .padding(.horizontal, 16)
@@ -47,11 +47,11 @@ struct MovieHorizontalScrollView: View {
                 posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5B.jpg")
             ),
             Movie(
-                id: "tt0068646",
-                title: "The Godfather",
-                genre: "Crime",
+                id: "custom-\(UUID().uuidString)",
+                title: "My Custom Film",
+                genre: "Sci-Fi",
                 posterAssetName: nil,
-                posterURL: URL(string: "https://m.media-amazon.com/images/M/MV5C.jpg")
+                posterURL: nil
             )
         ]
     )

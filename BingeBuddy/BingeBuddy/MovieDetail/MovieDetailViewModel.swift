@@ -23,9 +23,7 @@ final class MovieDetailViewModel: ObservableObject {
             detail = try await fetchDetail(for: movieID)
         } catch {
             errorMessage = "Failed to load details."
-            #if DEBUG
             print("MovieDetail load error:", error)
-            #endif
         }
     }
 

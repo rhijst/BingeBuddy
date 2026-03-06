@@ -26,9 +26,7 @@ final class PersonFilmographyViewModel: ObservableObject {
             credits = fetched.credits ?? []
         } catch {
             errorMessage = "Failed to load filmography."
-            #if DEBUG
             print("Filmography load error:", error)
-            #endif
         }
     }
 
