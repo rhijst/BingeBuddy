@@ -61,7 +61,7 @@ private struct MovieDestinations: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationDestination(for: Movie.self) { movie in
-                if movie.id.hasPrefix("tt-") {
+                if movie.id.hasPrefix("tt") {
                     MovieDetailView(movieID: movie.id)
                 } else {
                     CustomMovieDetailView(movie: movie)
