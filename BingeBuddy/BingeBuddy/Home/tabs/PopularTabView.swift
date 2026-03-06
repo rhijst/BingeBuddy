@@ -26,8 +26,6 @@ struct PopularTabView: View {
                 .padding(.top, 8)
             }
         }
-        .navigationTitle("Popular")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

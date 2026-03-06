@@ -5,50 +5,78 @@ struct HomeView: View {
     @EnvironmentObject private var listsStore: LocalMovieLists
     
     var body: some View {
-        NavigationStack {
-            TabView {
-                // Tab 1: Your Lists
+        TabView {
+            // Tab 1: Your Lists
+            NavigationStack {
                 YourListsTabView(viewModel: viewModel)
-                    .tabItem {
-                        Label("Your Lists", systemImage: "list.bullet")
-                    }
-                
-                // Tab 2: Most Popular Movies
+                    .withMovieDestinations()
+            }
+            .tabItem {
+                Label("Your Lists", systemImage: "list.bullet")
+            }
+            
+            // Tab 2: Most Popular Movies
+            NavigationStack {
                 PopularTabView(viewModel: viewModel)
-                    .tabItem {
-                        Label("Popular", systemImage: "star.fill")
-                    }
-                
-                // Tab 3: Custom Movies (CRUD)
+                    .withMovieDestinations()
+            }
+            .tabItem {
+                Label("Popular", systemImage: "star.fill")
+            }
+            
+            // Tab 3: Custom Movies (CRUD)
+            NavigationStack {
                 CustomMoviesView()
-                    .tabItem {
-                        Label("Custom", systemImage: "square.and.pencil")
-                    }
-                
-                // Tab 4: Search (inline search bar like CustomMoviesView)
+                    .withMovieDestinations()
+            }
+            .tabItem {
+                Label("Custom", systemImage: "square.and.pencil")
+            }
+            
+            // Tab 4: Search
+            NavigationStack {
                 SearchTabView(viewModel: viewModel)
-                    .tabItem {
-                        Label("Search", systemImage: "magnifyingglass")
-                    }
+                    .withMovieDestinations()
             }
-            .task {
-                await viewModel.load()
+            .tabItem {
+                Label("Search", systemImage: "magnifyingglass")
             }
-            // New routing based on full Movie value
+            
+            // Tab 5: Nearby Cinemas (MapKit)
+            NearbyCinemasView()
+                .tabItem {
+                    Label("Cinemas", systemImage: "map")
+                }
+        }
+        .task {
+            await viewModel.load()
+        }
+    }
+    
+}
+
+// MARK: - Reusable destinations
+
+private struct MovieDestinations: ViewModifier {
+    func body(content: Content) -> some View {
+        content
             .navigationDestination(for: Movie.self) { movie in
-                if movie.id.hasPrefix("tt") {
+                if movie.id.hasPrefix("tt-") {
                     MovieDetailView(movieID: movie.id)
                 } else {
                     CustomMovieDetailView(movie: movie)
                 }
             }
-            // Keep existing String destination if something else still links by ID
             .navigationDestination(for: String.self) { movieID in
                 MovieDetailView(movieID: movieID)
             }
-        }
     }
+}
 
+private extension View {
+    func withMovieDestinations() -> some View {
+        modifier(MovieDestinations())
+    }
 }
 
 struct SectionHeader: View {

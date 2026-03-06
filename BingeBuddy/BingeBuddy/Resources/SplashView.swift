@@ -7,7 +7,6 @@ struct SplashView: View {
     var body: some View {
         ZStack {
             Color(red: 155	 / 255, green: 230 / 255, blue: 241 / 255)
-
                 .ignoresSafeArea()
 
             Image("tv")

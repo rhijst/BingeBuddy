@@ -62,8 +62,6 @@ struct SearchTabView: View {
             }
             .padding(.top, 8)
         }
-        .navigationTitle("Search")
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
